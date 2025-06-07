@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import './globalicons.css';
 
 import Header from './components/Header';
 
@@ -29,7 +30,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Header />
-        {children}
+        <div className="w-full border-b border-neutral-200 bg-white p-4">
+          <div className="max-w-[1200px] mx-auto">
+            <h1 className="text-lg font-bold">Welcome to HyperCare</h1>
+          </div>
+        </div>
+        <div className="flex flex-row h-full items-stretch max-w-[1200px] mx-auto">
+          <div className="w-full bg-gray-50">{children}</div>
+        </div>
       </body>
     </html>
   );
