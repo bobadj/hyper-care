@@ -1,4 +1,3 @@
-import { toSnakeCase } from '@/app/utils';
 import React from 'react';
 import {
   BarChart,
@@ -13,7 +12,8 @@ import {
   Line,
 } from 'recharts';
 
-import RetailerLineChart from './RetailerLineChart';
+import { ColorType } from '@/app/types';
+import { toSnakeCase } from '@/app/utils';
 
 export type RetailerChartData = {
   name: string;
@@ -23,16 +23,16 @@ export type RetailerChartData = {
 type RetailerChartProps = {
   data: RetailerChartData[];
   title?: string;
-  barColor?: `#${string}`;
+  color?: ColorType;
   type?: 'bar' | 'line';
 };
 
-const RetailerChart = ({
+export default function RetailerChart({
   title = 'Customers - Sell In',
   data,
   color = '#06524c',
   type = 'bar',
-}: RetailerChartProps) => {
+}: RetailerChartProps) {
   const chartData = data.map((item) => {
     const obj = { name: item.name };
     const customers = (item.customer || []).reduce(
@@ -97,8 +97,4 @@ const RetailerChart = ({
       </ResponsiveContainer>
     </div>
   );
-};
-
-RetailerChart.Line = RetailerLineChart;
-
-export default RetailerChart;
+}

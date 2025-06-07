@@ -11,13 +11,15 @@ import {
 
 import MaterialIcon from '../MaterialIcon';
 import BrandShareBarChart from './BrandShareBarChart';
+
+import { ColorType } from '@/app/types';
 import { generateMonochromeRamp } from '@/app/utils';
 
 type BrandShareProps = {
   title?: string;
   data: { name: string; value: number }[];
   topN?: number;
-  topColors?: `#${string}`[];
+  topColors?: ColorType[];
 };
 
 const renderCustomizedLabel = ({

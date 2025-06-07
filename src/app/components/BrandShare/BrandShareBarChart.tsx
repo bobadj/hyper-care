@@ -11,13 +11,14 @@ import {
   LabelList,
 } from 'recharts';
 
+import { ColorType } from '@/app/types';
 import { generateMonochromeRamp, toSnakeCase } from '@/app/utils';
 
 type BrandShareBarChartProps = {
   title?: string;
   data: { name: string; value: number }[];
   topN?: number;
-  topColors?: `#${string}`[];
+  topColors?: ColorType[];
 };
 
 export default function BrandShareBarChart({
