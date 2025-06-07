@@ -17,3 +17,11 @@ export const generateMonochromeRamp = (
 
   return colors;
 };
+
+export const toSnakeCase = (str: string) => {
+  return str
+    .replace(/\s+/g, '_') // spaces to underscores
+    .replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`) // camelCase to snake_case
+    .replace(/^_+/, '') // remove leading underscore if any
+    .toLowerCase();
+};

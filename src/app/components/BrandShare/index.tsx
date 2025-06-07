@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 
 import MaterialIcon from '../MaterialIcon';
+import BrandShareBarChart from './BrandShareBarChart';
 import { generateMonochromeRamp } from '@/app/utils';
 
 type BrandShareProps = {
@@ -43,20 +44,19 @@ const renderCustomizedLabel = ({
   );
 };
 
-export default function BrandShare({
+const BrandShare = ({
   title,
   data = [],
   topN = 4,
   topColors = ['#008d82', '#008d82', '#006a62', '#074a45'],
-}: BrandShareProps) {
-  const grays = generateMonochromeRamp(data.length - topN);
-
+}: BrandShareProps) => {
+  const monochromeRamps = generateMonochromeRamp(data.length - topN);
   const colors = data.map((_, i) =>
-    i < topN ? topColors[i] : grays[i - topN],
+    i < topN ? topColors[i] : monochromeRamps[i - topN],
   );
 
   return (
-    <div className="w-full max-h-[500px] bg-white px-5 py-2 shadow-xs">
+    <div className="w-full h-[500px] bg-white px-5 py-2 shadow-xs">
       <div className="flex flex-row w-full">
         {title && (
           <h2 className="mx-auto font-semibold mb-4 text-neutral-500">
@@ -88,4 +88,8 @@ export default function BrandShare({
       </ResponsiveContainer>
     </div>
   );
-}
+};
+
+BrandShare.Bar = BrandShareBarChart;
+
+export default BrandShare;
