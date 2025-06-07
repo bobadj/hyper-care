@@ -1,5 +1,6 @@
 'use client';
 
+import Product from './components/Product';
 import BrandShare from './components/BrandShare';
 import RetailerChart from './components/RetailerChart';
 
@@ -62,6 +63,9 @@ export default function Home() {
       </div>
       <div className="col-span-2">
         <RetailerChart type="line" data={customerSellInData} />
+      </div>
+      <div className="col-span-2">
+        <Product.List />
       </div>
     </div>
   );
