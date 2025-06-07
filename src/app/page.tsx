@@ -3,6 +3,7 @@
 import Product from './components/Product';
 import BrandShare from './components/BrandShare';
 import RetailerChart from './components/RetailerChart';
+import Lineup from './components/Lineup';
 
 const sdaData = [
   { name: 'Philips', value: 11.9 },
@@ -47,6 +48,11 @@ const customerSellInData = [
   { name: 'Dec 2024', customer: [{ name: 'Tehnomania', value: 1898 }] },
 ];
 
+const lineupData = [
+  { name: 'Group A', value: 400 },
+  { name: 'Group B', value: 300 },
+];
+
 export default function Home() {
   return (
     <div className="grid grid-cols-2 gap-4 pt-4">
@@ -66,6 +72,13 @@ export default function Home() {
       </div>
       <div className="col-span-2">
         <Product.List />
+      </div>
+      <div className="col-span-2">
+        <div className="grid grid-cols-3 gap-2">
+          <Lineup title="Lineup sample placement" data={lineupData} />
+          <Lineup title="Sample placement" data={lineupData} />
+          <Lineup title="Non-lineup products" data={lineupData} />
+        </div>
       </div>
     </div>
   );
