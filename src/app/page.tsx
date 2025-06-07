@@ -1,5 +1,7 @@
 'use client';
+
 import BrandShare from './components/BrandShare';
+import RetailerChart from './components/RetailerChart';
 
 const sdaData = [
   { name: 'Philips', value: 11.9 },
@@ -29,6 +31,21 @@ const mdaData = [
   { name: 'Other', value: 4.1 },
 ];
 
+const customerSellInData = [
+  { name: 'Jan 2024', customer: [{ name: 'Tehnomania', value: 1200 }] },
+  { name: 'Feb 2024', customer: [{ name: 'Tehnomania', value: 900 }] },
+  { name: 'Mar 2024', customer: [{ name: 'Tehnomania', value: 1100 }] },
+  { name: 'Apr 2024', customer: [{ name: 'Tehnomania', value: 800 }] },
+  { name: 'May 2024', customer: [{ name: 'Tehnomania', value: 1600 }] },
+  { name: 'Jun 2024', customer: [{ name: 'Tehnomania', value: 1300 }] },
+  { name: 'Jul 2024', customer: [{ name: 'Tehnomania', value: 300 }] },
+  { name: 'Aug 2024', customer: [{ name: 'Tehnomania', value: 2000 }] },
+  { name: 'Sep 2024', customer: [{ name: 'Tehnomania', value: 1434 }] },
+  { name: 'Oct 2024', customer: [{ name: 'Tehnomania', value: 961 }] },
+  { name: 'Nov 2024', customer: [{ name: 'Tehnomania', value: 2135 }] },
+  { name: 'Dec 2024', customer: [{ name: 'Tehnomania', value: 1898 }] },
+];
+
 export default function Home() {
   return (
     <div className="grid grid-cols-2 gap-4 pt-4">
@@ -39,6 +56,9 @@ export default function Home() {
         <BrandShare.Bar data={sdaData} />
         <BrandShare.Bar data={sdaData} />
         <BrandShare.Bar data={sdaData} />
+      </div>
+      <div className="col-span-2 bg-white px-4 py-2">
+        <RetailerChart data={customerSellInData} />
       </div>
     </div>
   );
