@@ -57,8 +57,11 @@ export default function Home() {
         <BrandShare.Bar data={sdaData} />
         <BrandShare.Bar data={sdaData} />
       </div>
-      <div className="col-span-2 bg-white px-4 py-2">
+      <div className="col-span-2">
         <RetailerChart data={customerSellInData} />
+      </div>
+      <div className="col-span-2">
+        <RetailerChart type="line" data={customerSellInData} />
       </div>
     </div>
   );

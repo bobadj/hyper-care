@@ -9,9 +9,13 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Legend,
+  LineChart,
+  Line,
 } from 'recharts';
 
-type RetailerChartData = {
+import RetailerLineChart from './RetailerLineChart';
+
+export type RetailerChartData = {
   name: string;
   customer: Array<{ name: string; value: number }>;
 };
@@ -20,13 +24,15 @@ type RetailerChartProps = {
   data: RetailerChartData[];
   title?: string;
   barColor?: `#${string}`;
+  type?: 'bar' | 'line';
 };
 
-export default function RetailerChart({
+const RetailerChart = ({
   title = 'Customers - Sell In',
   data,
-  barColor = '#06524c',
-}: RetailerChartProps) {
+  color = '#06524c',
+  type = 'bar',
+}: RetailerChartProps) => {
   const chartData = data.map((item) => {
     const obj = { name: item.name };
     const customers = (item.customer || []).reduce(
@@ -43,27 +49,56 @@ export default function RetailerChart({
   );
 
   return (
-    <div className="bg-white px-4 py-2 shadow-xs">
+    <div className="bg-white px-4 py-4 shadow-xs">
       <h2 className="text-center font-bold mb-4 text-neutral-500 mb-5">
         {title}
       </h2>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={chartData} barSize={30}>
-          <CartesianGrid strokeDashoffset={3} />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Legend
-            iconType="circle"
-            formatter={(name: string) => (
-              <span className="text-black text-xs capitalize">{name}</span>
-            )}
-          />
-          <Tooltip />
-          {(customers || []).map((customer, i) => (
-            <Bar dataKey={toSnakeCase(customer)} key={i} fill={barColor} />
-          ))}
-        </BarChart>
+        {type === 'bar' ? (
+          <BarChart data={chartData} barSize={30}>
+            <CartesianGrid />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Legend
+              iconType="circle"
+              formatter={(name: string) => (
+                <span className="text-black text-xs capitalize">{name}</span>
+              )}
+            />
+            <Tooltip />
+            {(customers || []).map((customer, i) => (
+              <Bar dataKey={toSnakeCase(customer)} key={i} fill={color} />
+            ))}
+          </BarChart>
+        ) : (
+          <LineChart data={chartData}>
+            <CartesianGrid strokeDashoffset={3} />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend
+              iconType="circle"
+              formatter={(name: string) => (
+                <span className="text-black text-xs capitalize">{name}</span>
+              )}
+            />
+            {(customers || []).map((customer, i) => (
+              <Line
+                key={i}
+                type="monotone"
+                dataKey={toSnakeCase(customer)}
+                stroke={color}
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+            ))}
+          </LineChart>
+        )}
       </ResponsiveContainer>
     </div>
   );
-}
+};
+
+RetailerChart.Line = RetailerLineChart;
+
+export default RetailerChart;
