@@ -7,7 +7,7 @@ const Product = () => {
   return (
     <div className="border border-neutral-200 rounded-md bg-white flex flex-col gap-5 w-fit max-w-[385px] px-5 py-5 shadow-xs">
       <Image src={productImage} alt="Product" />
-      <div className="flex flex-col text-sm">
+      <div className="flex flex-col text-sm gap-2">
         <p>
           <span className="text-gray-500">Retailer:</span> WORTEN
         </p>
