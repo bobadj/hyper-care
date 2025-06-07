@@ -53,6 +53,39 @@ const lineupData = [
   { name: 'Group B', value: 300 },
 ];
 
+const lineupTableData = [
+  {
+    rank: 1,
+    retailer: 'SINERSIS',
+    pointOfSale: 'SINERSIS, TRADACETE, S.L., LA PUEBLA DE ALMORADIEL',
+    percentage: 900,
+  },
+  {
+    rank: 2,
+    retailer: 'ALCAMPO',
+    pointOfSale: 'ALCAMPO, Alcobendas',
+    percentage: 750,
+  },
+  {
+    rank: 3,
+    retailer: 'MEDIAMARKT',
+    pointOfSale: 'MEDIAMARKT, Huelva',
+    percentage: 600,
+  },
+  {
+    rank: 4,
+    retailer: 'CARREUFOR',
+    pointOfSale: 'CARREUFOR, Larin',
+    percentage: 400,
+  },
+  {
+    rank: 5,
+    retailer: 'MEDIAMARKT',
+    pointOfSale: 'MEDIAMARKT, La Maquinista',
+    percentage: 388,
+  },
+];
+
 export default function Home() {
   return (
     <div className="grid grid-cols-2 gap-4 pt-4">
@@ -74,11 +107,12 @@ export default function Home() {
         <Product.List />
       </div>
       <div className="col-span-2">
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2 mb-4">
           <Lineup title="Lineup sample placement" data={lineupData} />
           <Lineup title="Sample placement" data={lineupData} />
           <Lineup title="Non-lineup products" data={lineupData} />
         </div>
+        <Lineup.Table data={lineupTableData} />
       </div>
     </div>
   );

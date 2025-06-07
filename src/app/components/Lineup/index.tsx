@@ -5,6 +5,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import MaterialIcon from '../MaterialIcon';
 import Info from '../Info';
 import { ColorType } from '@/app/types';
+import LineupTable from './Table';
 
 type LineupProps = {
   title: string;
@@ -12,11 +13,11 @@ type LineupProps = {
   colors?: ColorType[];
 };
 
-export default function Lineup({
+const Lineup = ({
   title,
   data,
   colors = ['#006861', '#008c81'],
-}: LineupProps) {
+}: LineupProps) => {
   return (
     <div className="flex flex-col gap-2">
       <div className="w-full bg-white px-5 py-2 shadow-xs">
@@ -61,4 +62,8 @@ export default function Lineup({
       <Info title={title} content="30 %" />
     </div>
   );
-}
+};
+
+Lineup.Table = LineupTable;
+
+export default Lineup;

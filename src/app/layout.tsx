@@ -4,6 +4,7 @@ import './globals.css';
 import './globalicons.css';
 
 import Header from './components/Header';
+import Footer from './components/Footer';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -38,6 +39,7 @@ export default function RootLayout({
         <div className="flex flex-row h-full items-stretch max-w-[1200px] mx-auto">
           <div className="w-full bg-gray-50">{children}</div>
         </div>
+        <Footer />
       </body>
     </html>
   );
