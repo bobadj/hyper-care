@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import MaterialIcon from '../MaterialIcon';
 import Info from '../Info';
-import { ColorType } from '@/app/types';
+import { ColorType } from '@/types';
 import LineupTable from './Table';
 
 type LineupProps = {

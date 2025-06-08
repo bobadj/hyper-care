@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 
 import { prisma } from '@/lib/db';
 import { TaskType } from '@prisma/client';
-import { SalesReportEntryType, SalesReportType } from '@/app/types';
+import { SalesReportEntryType, SalesReportType } from '@/types';
 
 // To handle a GET request to /api
 export async function GET(request: NextRequest) {

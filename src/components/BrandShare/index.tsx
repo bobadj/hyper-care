@@ -12,8 +12,8 @@ import {
 import MaterialIcon from '../MaterialIcon';
 import BrandShareBarChart from './BrandShareBarChart';
 
-import { ColorType } from '@/app/types';
-import { generateMonochromeRamp } from '@/app/utils';
+import { ColorType } from '@/types';
+import { generateMonochromeRamp } from '@/utils';
 
 type BrandShareProps = {
   title?: string;

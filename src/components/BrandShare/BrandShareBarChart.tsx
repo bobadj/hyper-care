@@ -11,8 +11,8 @@ import {
   LabelList,
 } from 'recharts';
 
-import { ColorType } from '@/app/types';
-import { generateMonochromeRamp, toSnakeCase } from '@/app/utils';
+import { ColorType } from '@/types';
+import { generateMonochromeRamp, toSnakeCase } from '@/utils';
 
 type BrandShareBarChartProps = {
   title?: string;

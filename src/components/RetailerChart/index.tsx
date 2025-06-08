@@ -12,8 +12,8 @@ import {
   Line,
 } from 'recharts';
 
-import { ColorType } from '@/app/types';
-import { toSnakeCase } from '@/app/utils';
+import { ColorType } from '@/types';
+import { toSnakeCase } from '@/utils';
 
 export type RetailerChartData = {
   name: string;

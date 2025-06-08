@@ -1,4 +1,4 @@
-import { LineupType } from "@/app/types";
+import { LineupType } from '@/types';
 
 type LineupTableProps = {
   data: LineupType[];
