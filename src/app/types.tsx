@@ -7,10 +7,7 @@ export type LineupType = {
   percentage: number;
 };
 
-export type SalesReportType = {
-  retailer: string;
-  data: Array<SalesReportEntryType>;
-};
+export type SalesReportType = Array<SalesReportEntryType>;
 
 export type SalesReportEntryType = {
   productSku: string;

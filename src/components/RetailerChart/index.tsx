@@ -17,25 +17,25 @@ import { toSnakeCase } from '@/app/utils';
 
 export type RetailerChartData = {
   name: string;
-  customer: Array<{ name: string; value: number }>;
+  retailer: Array<{ name: string; value: number }>;
 };
 
 type RetailerChartProps = {
   data: RetailerChartData[];
   title?: string;
-  color?: ColorType;
+  colors?: ColorType[];
   type?: 'bar' | 'line';
 };
 
 export default function RetailerChart({
   title = 'Customers - Sell In',
   data,
-  color = '#06524c',
+  colors = ['#008d82', '#006a62', '#074a45'],
   type = 'bar',
 }: RetailerChartProps) {
   const chartData = data.map((item) => {
     const obj = { name: item.name };
-    const customers = (item.customer || []).reduce(
+    const customers = (item.retailer || []).reduce(
       (arr, c) => ({ ...arr, [toSnakeCase(c.name)]: c.value }),
       {},
     );
@@ -45,7 +45,7 @@ export default function RetailerChart({
     };
   });
   const customers = Array.from(
-    new Set(data.flatMap((d) => d.customer.map((c) => c.name))),
+    new Set(data.flatMap((d) => d.retailer.map((c) => c.name))),
   );
 
   return (
@@ -55,7 +55,7 @@ export default function RetailerChart({
       </h2>
       <ResponsiveContainer width="100%" height={300}>
         {type === 'bar' ? (
-          <BarChart data={chartData} barSize={30}>
+          <BarChart data={chartData} barSize={15}>
             <CartesianGrid />
             <XAxis dataKey="name" />
             <YAxis />
@@ -67,7 +67,7 @@ export default function RetailerChart({
             />
             <Tooltip />
             {(customers || []).map((customer, i) => (
-              <Bar dataKey={toSnakeCase(customer)} key={i} fill={color} />
+              <Bar dataKey={toSnakeCase(customer)} key={i} fill={colors[i]} />
             ))}
           </BarChart>
         ) : (
@@ -87,7 +87,7 @@ export default function RetailerChart({
                 key={i}
                 type="monotone"
                 dataKey={toSnakeCase(customer)}
-                stroke={color}
+                stroke={colors[i]}
                 strokeWidth={2}
                 dot={{ r: 3 }}
               />

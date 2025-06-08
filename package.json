@@ -12,9 +12,12 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.8.0",
     "@prisma/client": "^6.9.0",
+    "@tanstack/react-query": "^5.80.6",
     "classname": "^0.0.0",
     "classnames": "^2.5.1",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.16.0",
     "next": "15.3.3",
     "prisma": "^6.9.0",

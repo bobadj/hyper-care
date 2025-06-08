@@ -1,4 +1,7 @@
-import { PrismaClient, User } from '@prisma/client';
+import { subMonths } from 'date-fns';
+import { faker } from '@faker-js/faker';
+import { PrismaClient, TaskType } from '@prisma/client';
+
 const prisma = new PrismaClient();
 
 const generateRandomSKU = (prefix: string): string => {
@@ -155,12 +158,71 @@ async function populateRetailers() {
   }
 }
 
-async function populateSalesReports() {}
+async function populatePosForRetailer() {
+  const retailers = await prisma.retailer.findMany();
+
+  for (const retailer of retailers) {
+    await prisma.pOS.create({
+      data: {
+        name: retailer.name,
+        location: retailer.address,
+        retailer: {
+          connect: {
+            id: retailer.id,
+          },
+        },
+      },
+    });
+  }
+}
+
+async function populateSalesReports() {
+  const products = await prisma.product.findMany();
+  const posList = await prisma.pOS.findMany();
+  const user = await prisma.user.findFirst();
+
+  if (!user || posList.length === 0 || products.length === 0) {
+    console.error('Missing user, POS, or products');
+    return;
+  }
+  // Generate a report for each month
+  for (let i = 0; i < 12; i++) {
+    const reportDate = subMonths(new Date(2024, 11, 1), 11 - i); // Jan to Dec 2024
+    for (const pos of posList) {
+      const report = await prisma.report.create({
+        data: {
+          userId: user.id,
+          posId: pos.id,
+          date: reportDate,
+          tasks: {
+            create: {
+              type: TaskType.SALE_REPORT,
+              submitted: true,
+              data: products.map((product) => {
+                const price = faker.number.float({ min: 10, max: 100 });
+                const quantity = faker.number.int({ min: 5, max: 50 });
+                return {
+                  productSku: product.sku,
+                  productName: product.name,
+                  price,
+                  quantity,
+                  revenue: +(price * quantity).toFixed(2),
+                };
+              }),
+            },
+          },
+        },
+      });
+    }
+  }
+}
 
 async function main() {
   await populateUsers();
   await populateBrandsAndProducts();
   await populateRetailers();
+  await populatePosForRetailer();
+  await populateSalesReports();
 }
 
 main()
