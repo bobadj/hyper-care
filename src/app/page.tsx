@@ -9,6 +9,7 @@ import {
   SalesReport,
   StockStatusReport,
   LineupReport,
+  TradeMarketingActivityReport,
 } from '@/components/Reports';
 
 const sdaData = [
@@ -108,7 +109,7 @@ export default function Home() {
     },
     {
       label: 'Trade Marketing Activity',
-      content: <div>Here are your reports.</div>,
+      content: <TradeMarketingActivityReport />,
     },
     {
       label: 'Brand Share',

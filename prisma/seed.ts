@@ -272,19 +272,6 @@ async function populateLineupSamplePlacementReport() {
       .slice(0, faker.number.int({ min: 10, max: 20 }));
     const reportedProductSkus = reportedProducts.map((p) => p.sku);
 
-    // 3. Calculate metrics (for optional logging)
-    // const intersectionCount = reportedProductSkus.filter((id) =>
-    //   lineupProductSkus.includes(id),
-    // ).length;
-    // const samplePlacement = reportedProductSkus.length / lineup.length;
-    // const lineupSamplePlacement = intersectionCount / lineup.length;
-
-    // console.log(`POS: ${pos.name}`);
-    // console.log(`Sample Placement: ${(samplePlacement * 100).toFixed(2)}%`);
-    // console.log(
-    //   `Lineup Sample Placement: ${(lineupSamplePlacement * 100).toFixed(2)}%`,
-    // );
-
     // 4. Create report + task
     await prisma.report.create({
       data: {
@@ -305,6 +292,44 @@ async function populateLineupSamplePlacementReport() {
   }
 }
 
+async function populateTradeMarketingActivityReport() {
+  const activityTypes = ['stand', 'leaflet', 'screen', 'banner'];
+
+  const allProducts = await prisma.product.findMany();
+  const productSkus = allProducts.map((p) => p.sku);
+  const brands = await prisma.brand.findMany();
+  const posList = await prisma.pOS.findMany({ take: 2 });
+  const user = await prisma.user.findFirst();
+
+  for (let i = 0; i < 12; i++) {
+    const date = new Date(2024, i, 1);
+
+    for (const pos of posList) {
+      await prisma.report.create({
+        data: {
+          date,
+          posId: pos.id,
+          userId: user!.id,
+          tasks: {
+            create: {
+              type: TaskType.TRADE_MARKETING_ACTIVITY,
+              data: faker.helpers.multiple(
+                () => ({
+                  type: faker.helpers.arrayElement(activityTypes),
+                  brand: faker.helpers.arrayElement(brands),
+                  isPresent: faker.datatype.boolean(),
+                  productSku: faker.helpers.arrayElement(productSkus),
+                }),
+                { count: { min: 2, max: 5 } },
+              ),
+            },
+          },
+        },
+      });
+    }
+  }
+}
+
 async function main() {
   await populateUsers();
   await populateBrandsAndProducts();
@@ -313,6 +338,7 @@ async function main() {
   await populateSalesReports();
   await populateStockStatusReport();
   await populateLineupSamplePlacementReport();
+  await populateTradeMarketingActivityReport();
 }
 
 main()

@@ -13,6 +13,8 @@ class ReportService {
   public async getReport(type: TaskType) {
     const data = await this.getReportData(type);
     switch (type) {
+      case TaskType.TRADE_MARKETING_ACTIVITY:
+        return await this.getTradeMarketingActivityReport(data);
       case TaskType.LINEUP_SAMPLE_PLACEMENT:
         return await this.getLineupSamplePlacementReport(data);
       case TaskType.STOCK_STATUS:
@@ -238,6 +240,37 @@ class ReportService {
           ...entry,
         })),
     };
+  }
+
+  private async getTradeMarketingActivityReport(
+    reports: Array<Report & { tasks: Task[]; pos: POS }>,
+  ) {
+    const productsMap = await prisma.product
+      .findMany({
+        select: {
+          sku: true,
+          name: true,
+        },
+      })
+      .then((list) => Object.fromEntries(list.map((p) => [p.sku, p.name])));
+
+    console.log(reports.length);
+
+    return reports.flatMap((report) =>
+      report.tasks.flatMap((task) => {
+        const activities = (task.data as any) || [];
+
+        return activities.map((activity: any) => ({
+          retailer: report.pos.name,
+          pointOfSale: report.pos.location,
+          product: productsMap[activity.productSku] || 'Unknown Product',
+          date: report.date,
+          isPresent: activity.isPresent,
+          type: activity.type,
+          brand: activity.brand,
+        }));
+      }),
+    );
   }
 }
 
