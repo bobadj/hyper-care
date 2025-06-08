@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import {
   ResponsiveContainer,
   BarChart,
@@ -12,11 +13,14 @@ import {
 } from 'recharts';
 
 import { toSnakeCase } from '@/utils';
+import { useExport } from '@/hooks/useHook';
 import type { ColorType, RetailerChartData } from '@/types';
 
+import Dropdown from '../Dropdown';
 import PieChart from './PieChart';
 import CircleChart from './CircleChart';
 import BarInlineChart from './BarInlineChart';
+import MaterialIcon from '../MaterialIcon';
 
 type RetailerChartProps = {
   data: RetailerChartData[];
@@ -31,6 +35,9 @@ const Chart = ({
   colors = ['#008d82', '#006a62', '#074a45'],
   type = 'bar',
 }: RetailerChartProps) => {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const { exportElement, exportCsv } = useExport();
+
   const chartData = data.map((item) => {
     const obj = { name: item.name };
     const customers = (item.retailer || []).reduce(
@@ -48,10 +55,48 @@ const Chart = ({
 
   return (
     <div className="bg-white px-4 py-4 shadow-xs">
-      <h2 className="text-center font-bold mb-4 text-neutral-500 mb-5">
-        {title}
-      </h2>
-      <ResponsiveContainer width="100%" height={300}>
+      <div className="flex flex-row w-full mb-12">
+        {title && (
+          <h2 className="mx-auto font-semibold mb-4 text-neutral-500">
+            {title}
+          </h2>
+        )}
+        <Dropdown trigger={<MaterialIcon name="menu" />}>
+          <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+            <li
+              className="p-2 cursor-pointer"
+              onClick={() =>
+                exportElement(chartRef.current, {
+                  type: 'png',
+                  filename: `${title}.pptx`,
+                })
+              }
+            >
+              Export as PPT
+            </li>
+            <li
+              className="p-2 cursor-pointer"
+              onClick={() =>
+                exportElement(chartRef.current, {
+                  type: 'png',
+                  filename: `${title}.png`,
+                })
+              }
+            >
+              Export as PNG
+            </li>
+            <li
+              className="p-2 cursor-pointer"
+              onClick={() =>
+                exportCsv({ data: chartData, filename: `${title}.csv` })
+              }
+            >
+              Export as CSV
+            </li>
+          </ul>
+        </Dropdown>
+      </div>
+      <ResponsiveContainer ref={chartRef} width="100%" height={300}>
         {type === 'bar' ? (
           <BarChart data={chartData} barSize={15}>
             <CartesianGrid />

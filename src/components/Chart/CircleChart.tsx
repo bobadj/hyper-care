@@ -1,6 +1,6 @@
 'use client';
 
-import classNames from 'classnames';
+import { useRef } from 'react';
 import {
   PieChart,
   Pie,
@@ -9,9 +9,11 @@ import {
   PieLabelRenderProps,
 } from 'recharts';
 
+import Dropdown from '../Dropdown';
 import MaterialIcon from '../MaterialIcon';
 
-import { ColorType } from '@/types';
+import type { ColorType } from '@/types';
+import { useExport } from '@/hooks/useHook';
 import { generateMonochromeRamp } from '@/utils';
 
 type CircleChartProps = {
@@ -51,6 +53,9 @@ export default function CircleChart({
   topN = 4,
   topColors = ['#008d82', '#008d82', '#006a62', '#074a45'],
 }: CircleChartProps) {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const { exportElement, exportCsv } = useExport();
+
   const monochromeRamps = generateMonochromeRamp(data.length - topN);
   const colors = data.map((_, i) =>
     i < topN ? topColors[i] : monochromeRamps[i - topN],
@@ -64,15 +69,42 @@ export default function CircleChart({
             {title}
           </h2>
         )}
-        <h2
-          className={classNames('font-semibold mb-4 text-neutral-500', {
-            'ms-auto': !title,
-          })}
-        >
-          <MaterialIcon name="menu" cursor />
-        </h2>
+        {data.length > 0 && (
+          <Dropdown trigger={<MaterialIcon name="menu" />}>
+            <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+              <li
+                className="p-2 cursor-pointer"
+                onClick={() =>
+                  exportElement(chartRef.current, {
+                    type: 'png',
+                    filename: `${title}.pptx`,
+                  })
+                }
+              >
+                Export as PPT
+              </li>
+              <li
+                className="p-2 cursor-pointer"
+                onClick={() =>
+                  exportElement(chartRef.current, {
+                    type: 'png',
+                    filename: `${title}.png`,
+                  })
+                }
+              >
+                Export as PNG
+              </li>
+              <li
+                className="p-2 cursor-pointer"
+                onClick={() => exportCsv({ data, filename: `${title}.csv` })}
+              >
+                Export as CSV
+              </li>
+            </ul>
+          </Dropdown>
+        )}
       </div>
-      <ResponsiveContainer>
+      <ResponsiveContainer ref={chartRef}>
         <PieChart>
           <Pie
             data={data}

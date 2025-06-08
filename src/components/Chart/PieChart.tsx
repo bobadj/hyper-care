@@ -1,6 +1,6 @@
 'use client';
 
-import classNames from 'classnames';
+import { useRef } from 'react';
 import {
   PieChart as RechartsPieChart,
   Pie,
@@ -10,9 +10,11 @@ import {
 } from 'recharts';
 
 import Info from '../Info';
+import Dropdown from '../Dropdown';
 import MaterialIcon from '../MaterialIcon';
 
-import { ColorType } from '@/types';
+import type { ColorType } from '@/types';
+import { useExport } from '@/hooks/useHook';
 
 type PieChartProps = {
   title: string;
@@ -29,6 +31,9 @@ export default function PieChart({
   valueKey = 'lineupSamplePlacementTotal',
   value = 30,
 }: PieChartProps) {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const { exportElement, exportCsv } = useExport();
+
   return (
     <div className="flex flex-col gap-2">
       <div className="w-full bg-white px-5 py-2 shadow-xs">
@@ -36,13 +41,44 @@ export default function PieChart({
           <h2 className="mx-auto font-semibold mb-4 text-neutral-500">
             {title}
           </h2>
-          <h2 className={classNames('font-semibold mb-4 text-neutral-500')}>
-            <MaterialIcon name="menu" cursor />
-          </h2>
+          {data.length > 0 && (
+            <Dropdown trigger={<MaterialIcon name="menu" />}>
+              <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+                <li
+                  className="p-2 cursor-pointer"
+                  onClick={() =>
+                    exportElement(chartRef.current, {
+                      type: 'png',
+                      filename: `${title}.pptx`,
+                    })
+                  }
+                >
+                  Export as PPT
+                </li>
+                <li
+                  className="p-2 cursor-pointer"
+                  onClick={() =>
+                    exportElement(chartRef.current, {
+                      type: 'png',
+                      filename: `${title}.png`,
+                    })
+                  }
+                >
+                  Export as PNG
+                </li>
+                <li
+                  className="p-2 cursor-pointer"
+                  onClick={() => exportCsv({ data, filename: `${title}.csv` })}
+                >
+                  Export as CSV
+                </li>
+              </ul>
+            </Dropdown>
+          )}
         </div>
 
         <div className="flex justify-center">
-          <ResponsiveContainer width={350} height={320}>
+          <ResponsiveContainer ref={chartRef} width={350} height={320}>
             <RechartsPieChart>
               <Pie
                 data={data}

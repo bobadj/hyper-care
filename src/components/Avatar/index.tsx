@@ -2,7 +2,7 @@ type AvatarProps = {
   name?: string;
 };
 
-export default function Avatar({ name = 'Slobodan Djordjevic' }: AvatarProps) {
+export default function Avatar({ name = 'Ekrem Jevric' }: AvatarProps) {
   return (
     <div className="flex flex-row items-center gap-4">
       <span>{name}</span>
