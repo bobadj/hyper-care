@@ -1,18 +1,20 @@
 import { format } from 'date-fns';
 import { POS, Report, Task, TaskType } from '@prisma/client';
 
+import { prisma } from '@/lib/db';
 import {
   SalesReportEntryType,
   SalesReportType,
   StockStatusReportEntryType,
   StockStatusReportType,
 } from '@/types';
-import { prisma } from '@/lib/db';
 
 class ReportService {
   public async getReport(type: TaskType) {
     const data = await this.getReportData(type);
     switch (type) {
+      case TaskType.BRAND_SHARE:
+        return await this.getBrandShareReport(data);
       case TaskType.TRADE_MARKETING_ACTIVITY:
         return await this.getTradeMarketingActivityReport(data);
       case TaskType.LINEUP_SAMPLE_PLACEMENT:
@@ -24,6 +26,17 @@ class ReportService {
       default:
         throw new Error('Invalid report type');
     }
+  }
+
+  private formatBucket(bucket: Record<string, number>) {
+    const total = Object.values(bucket).reduce((a, b) => a + b, 0) || 1;
+
+    return Object.entries(bucket)
+      .map(([name, value]) => ({
+        name,
+        value: +((value / total) * 100).toFixed(1),
+      }))
+      .sort((a, b) => b.value - a.value);
   }
 
   private async getReportData(
@@ -271,6 +284,59 @@ class ReportService {
         }));
       }),
     );
+  }
+
+  private async getBrandShareReport(
+    reports: Array<Report & { tasks: Task[]; pos: POS }>,
+  ) {
+    // Category-wide totals (MDA/SDA)
+    const categoryBuckets: Record<string, Record<string, number>> = {
+      mda: {},
+      sda: {},
+    };
+
+    const allByRetailer: Record<string, Record<string, number>> = {};
+    for (const report of reports) {
+      const retailerName = `${report.pos.name}, ${report.pos.location}`;
+
+      for (const task of report.tasks) {
+        const entries = (task.data || []) as any;
+
+        for (const entry of entries) {
+          const { brand, category, exposure } = entry;
+          if (!brand || !category || !exposure) continue;
+
+          const brandName = brand.trim();
+          const catKey = category.toLowerCase();
+          const exposureValue = Number(exposure);
+
+          // Category buckets
+          if (!categoryBuckets[catKey]) categoryBuckets[catKey] = {};
+          categoryBuckets[catKey][brandName] =
+            (categoryBuckets[catKey][brandName] || 0) + exposureValue;
+
+          // All (per retailer)
+          if (!allByRetailer[retailerName]) allByRetailer[retailerName] = {};
+          allByRetailer[retailerName][brandName] =
+            (allByRetailer[retailerName][brandName] || 0) + exposureValue;
+        }
+      }
+    }
+
+    // Format "all" by retailer
+    const formattedAll = Object.entries(allByRetailer).map(
+      ([retailer, brandData]) => ({
+        retailer,
+        data: this.formatBucket(brandData),
+      }),
+    );
+
+    // Final response
+    return {
+      mda: this.formatBucket(categoryBuckets.mda),
+      sda: this.formatBucket(categoryBuckets.sda),
+      all: formattedAll,
+    };
   }
 }
 

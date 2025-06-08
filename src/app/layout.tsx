@@ -39,7 +39,7 @@ export default function RootLayout({
               <h1 className="text-lg font-bold">Welcome to HyperCare</h1>
             </div>
           </div>
-          <div className="flex flex-row min-h-[80%] items-stretch max-w-[1200px] mx-auto">
+          <div className="flex flex-row min-h-[80%] items-stretch max-w-[1200px] mx-auto mb-4">
             <div className="w-full bg-gray-50">{children}</div>
           </div>
           <Footer />

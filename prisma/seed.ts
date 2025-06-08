@@ -1,5 +1,5 @@
 import { subMonths } from 'date-fns';
-import { faker } from '@faker-js/faker';
+import { faker, tr } from '@faker-js/faker';
 import { PrismaClient, TaskType } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -330,6 +330,62 @@ async function populateTradeMarketingActivityReport() {
   }
 }
 
+async function populateBrandShareReports() {
+  const categories = await prisma.category.findMany({
+    include: {
+      brand: true,
+      subcategories: {
+        include: {
+          products: true,
+        },
+      },
+    },
+  });
+  const posList = await prisma.pOS.findMany();
+  const user = await prisma.user.findFirst();
+
+  if (!user || posList.length === 0 || categories.length === 0) {
+    console.error('Missing user, POS, or category data');
+    return;
+  }
+
+  for (let i = 0; i < 12; i++) {
+    const reportDate = subMonths(new Date(2024, 11, 1), 11 - i); // Jan to Dec 2024
+    for (const pos of posList) {
+      const brandShareData: any[] = [];
+
+      for (const category of categories) {
+        for (const sub of category.subcategories) {
+          const brandExposure = faker.number.int({ min: 10, max: 50 });
+
+          // All products in the subcategory are assumed to belong to the same brand (via category)
+          brandShareData.push({
+            brand: category.brand.name,
+            category: category.name,
+            subcategory: sub.name,
+            exposure: brandExposure,
+          });
+        }
+      }
+
+      await prisma.report.create({
+        data: {
+          userId: user.id,
+          posId: pos.id,
+          date: reportDate,
+          tasks: {
+            create: {
+              type: TaskType.BRAND_SHARE,
+              submitted: true,
+              data: brandShareData,
+            },
+          },
+        },
+      });
+    }
+  }
+}
+
 async function main() {
   await populateUsers();
   await populateBrandsAndProducts();
@@ -339,6 +395,7 @@ async function main() {
   await populateStockStatusReport();
   await populateLineupSamplePlacementReport();
   await populateTradeMarketingActivityReport();
+  await populateBrandShareReports();
 }
 
 main()

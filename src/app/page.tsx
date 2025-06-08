@@ -10,6 +10,7 @@ import {
   StockStatusReport,
   LineupReport,
   TradeMarketingActivityReport,
+  BrandShareReport,
 } from '@/components/Reports';
 
 const sdaData = [
@@ -113,7 +114,7 @@ export default function Home() {
     },
     {
       label: 'Brand Share',
-      content: <div>Here are your reports.</div>,
+      content: <BrandShareReport />,
     },
   ];
 
@@ -123,12 +124,12 @@ export default function Home() {
   //   <div className="grid grid-cols-2 gap-4 pt-4">
   //     <BrandShare data={sdaData} title="SDA" />
   //     <BrandShare data={mdaData} title="MDA" />
-  //     <div className="col-span-2 bg-white px-4 py-2">
-  //       <BrandShare.Bar data={sdaData} />
-  //       <BrandShare.Bar data={sdaData} />
-  //       <BrandShare.Bar data={sdaData} />
-  //       <BrandShare.Bar data={sdaData} />
-  //     </div>
+      // <div className="col-span-2 bg-white px-4 py-2">
+      //   <BrandShare.Bar data={sdaData} />
+      //   <BrandShare.Bar data={sdaData} />
+      //   <BrandShare.Bar data={sdaData} />
+      //   <BrandShare.Bar data={sdaData} />
+      // </div>
   //     <div className="col-span-2">
   //       <RetailerChart data={customerSellInData} />
   //     </div>
