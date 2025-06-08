@@ -1,0 +1,176 @@
+import { PrismaClient, User } from '@prisma/client';
+const prisma = new PrismaClient();
+
+const generateRandomSKU = (prefix: string): string => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const randomPart = Array.from({ length: 6 }, () =>
+    chars.charAt(Math.floor(Math.random() * chars.length)),
+  ).join('');
+  return `${prefix}-${randomPart}`;
+};
+
+async function populateUsers() {
+  const users = [
+    {
+      name: 'Ekrem Jevric',
+      email: 'ekrem-jevric@idol.com',
+    },
+    {
+      name: 'Sasa Matic',
+      email: 'sasa-matic@grand.com',
+    },
+    {
+      name: 'Mile Lajkovac',
+      email: 'mile@lajkovac.com',
+    },
+  ];
+  await prisma.user.createMany({
+    data: users,
+  });
+}
+
+async function populateBrandsAndProducts() {
+  // Brands → Categories → Subcategories → Products
+  const brandNames = [
+    'Braun',
+    'Beko',
+    'Vox',
+    'Gorenje',
+    'Bosch',
+    'Philips',
+    'Tefal',
+    'ECG',
+    'Rowenta',
+    'Sencor',
+  ];
+  // Categories with subcategories
+  const categoryData = {
+    MDA: ['Washing Machines', 'Refrigerators', 'Ovens'],
+    SDA: ['Toasters', 'Blenders', 'Vacuum Cleaners'],
+    TV: ['LED TVs', 'OLED TVs', 'Smart TVs'],
+    HVAC: ['Air Conditioners', 'Heaters', 'Ventilators'],
+  };
+
+  const brands = await Promise.all(
+    brandNames.map((name) => prisma.brand.create({ data: { name } })),
+  );
+
+  for (const brand of brands) {
+    const c = Object.keys(categoryData).map((name) =>
+      prisma.category.create({
+        data: {
+          name,
+          brand: {
+            connect: {
+              id: brand.id,
+            },
+          },
+        },
+      }),
+    );
+    const categories = await Promise.all(c);
+
+    for (const category of categories) {
+      const d = categoryData[
+        category.name as 'MDA' | 'SDA' | 'TV' | 'HVAC'
+      ] as string[];
+      const subC = d.map((name: string) =>
+        prisma.subcategory.create({
+          data: {
+            name,
+            category: {
+              connect: {
+                id: category.id,
+              },
+            },
+          },
+        }),
+      );
+      const subcategories = await Promise.all(subC);
+
+      for (const subCat of subcategories) {
+        await Promise.all(
+          Array.from({ length: 5 }).map((_, idx) => {
+            return prisma.product.create({
+              data: {
+                name: `${subCat.name} Product ${idx + 1}`,
+                subcategoryId: subCat.id,
+                sku: generateRandomSKU(subCat.name.slice(0, 3).toUpperCase()),
+              },
+            });
+          }),
+        );
+      }
+    }
+  }
+}
+
+async function populateRetailers() {
+  const retailersData = [
+    {
+      name: 'Tehnomania',
+      address: 'Leskovac',
+    },
+    {
+      name: 'Tehnomania',
+      address: 'Beograd',
+    },
+    {
+      name: 'Tehnomania',
+      address: 'Kraljevo',
+    },
+    {
+      name: 'Gigatron',
+      address: 'Leskovac',
+    },
+    {
+      name: 'Gigatron',
+      address: 'Beograd',
+    },
+    {
+      name: 'Gigatron',
+      address: 'Kraljevo',
+    },
+    {
+      name: 'Uspon',
+      address: 'Cacak',
+    },
+    {
+      name: 'Uspon',
+      address: 'Kragujevac',
+    },
+    {
+      name: 'Gigatron',
+      address: 'Kraljevo',
+    },
+  ];
+
+  for (const retailer of retailersData) {
+    await prisma.retailer.create({
+      data: {
+        name: retailer.name,
+        address: retailer.address,
+      },
+    });
+  }
+}
+
+async function populateSalesReports() {}
+
+async function main() {
+  await populateUsers();
+  await populateBrandsAndProducts();
+  await populateRetailers();
+}
+
+main()
+  .then(() => {
+    console.log('✅ Seeding completed.');
+  })
+  .catch((e) => {
+    console.error('❌ Seeding failed:', e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = []
+}
+
+datasource db {
+  provider = "sqlite" // use postgresql when deploying
+  url      = env("DATABASE_URL")
+}
+
+enum TaskType {
+  SALE_REPORT
+  STOCK_STATUS
+  LINEUP_SAMPLE_PLACEMENT
+  TRADE_MARKETING_ACTIVITY
+  BRAND_SHARE
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  reports Report[]
+
+  @@map("users")
+}
+
+model Retailer {
+  id        String   @id @default(uuid())
+  name      String
+  address   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  pos POS[]
+
+  @@map("retailers")
+}
+
+model POS {
+  id         String   @id @default(uuid())
+  name       String
+  location   String?
+  retailerId String   @map("retailer_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @map("updated_at")
+
+  reports  Report[]
+  retailer Retailer @relation(fields: [retailerId], references: [id])
+}
+
+model Report {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  posId     String   @map("pos_id")
+  date      DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  tasks Task[]
+  pos   POS    @relation(fields: [posId], references: [id])
+  user  User   @relation(fields: [userId], references: [id])
+
+  @@map("reports")
+}
+
+model Task {
+  id        String   @id @default(uuid())
+  reportId  String   @map("report_id")
+  submitted Boolean  @default(false)
+  type      TaskType
+  data      Json? // Additional fields per task type can be handled via JSON or separate detailed tables per type
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  report Report @relation(fields: [reportId], references: [id])
+
+  @@map("tasks")
+}
+
+model Brand {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  categories Category[]
+
+  @@map("brands")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String
+  brandId   String   @map("brand_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  brand         Brand         @relation(fields: [brandId], references: [id])
+  subcategories Subcategory[]
+
+  @@map("categories")
+}
+
+model Subcategory {
+  id         String   @id @default(uuid())
+  name       String
+  categoryId String   @map("category_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @map("updated_at")
+
+  products Product[]
+  category Category  @relation(fields: [categoryId], references: [id])
+
+  @@map("subcategories")
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  sku           String   @unique
+  subcategoryId String   @map("subcategory_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @map("updated_at")
+
+  subcategory Subcategory @relation(fields: [subcategoryId], references: [id])
+
+  @@map("products")
+}
