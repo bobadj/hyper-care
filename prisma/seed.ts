@@ -165,10 +165,10 @@ async function main() {
 
 main()
   .then(() => {
-    console.log('✅ Seeding completed.');
+    console.log('Seeding completed.');
   })
   .catch((e) => {
-    console.error('❌ Seeding failed:', e);
+    console.error('Seeding failed:', e);
     process.exit(1);
   })
   .finally(async () => {

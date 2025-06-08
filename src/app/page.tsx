@@ -1,9 +1,10 @@
 'use client';
 
-import Product from './components/Product';
-import BrandShare from './components/BrandShare';
-import RetailerChart from './components/RetailerChart';
-import Lineup from './components/Lineup';
+import Product from '../components/Product';
+import BrandShare from '../components/BrandShare';
+import RetailerChart from '../components/RetailerChart';
+import Lineup from '../components/Lineup';
+import Tabs from '@/components/Tabs';
 
 const sdaData = [
   { name: 'Philips', value: 11.9 },
@@ -87,33 +88,61 @@ const lineupTableData = [
 ];
 
 export default function Home() {
+  const tabData = [
+    {
+      label: 'Sales Report',
+      content: <div>This is the overview tab.</div>,
+    },
+    {
+      label: 'Stock Status',
+      content: <div>Sales data will appear here.</div>,
+    },
+    {
+      label: 'Lineup Sample Placement',
+      content: <div>Here are your reports.</div>,
+    },
+    {
+      label: 'Trade Marketing Activity',
+      content: <div>Here are your reports.</div>,
+    },
+    {
+      label: 'Brand Share',
+      content: <div>Here are your reports.</div>,
+    },
+  ];
+
   return (
-    <div className="grid grid-cols-2 gap-4 pt-4">
-      <BrandShare data={sdaData} title="SDA" />
-      <BrandShare data={mdaData} title="MDA" />
-      <div className="col-span-2 bg-white px-4 py-2">
-        <BrandShare.Bar data={sdaData} />
-        <BrandShare.Bar data={sdaData} />
-        <BrandShare.Bar data={sdaData} />
-        <BrandShare.Bar data={sdaData} />
-      </div>
-      <div className="col-span-2">
-        <RetailerChart data={customerSellInData} />
-      </div>
-      <div className="col-span-2">
-        <RetailerChart type="line" data={customerSellInData} />
-      </div>
-      <div className="col-span-2">
-        <Product.List />
-      </div>
-      <div className="col-span-2">
-        <div className="grid grid-cols-3 gap-2 mb-4">
-          <Lineup title="Lineup sample placement" data={lineupData} />
-          <Lineup title="Sample placement" data={lineupData} />
-          <Lineup title="Non-lineup products" data={lineupData} />
-        </div>
-        <Lineup.Table data={lineupTableData} />
-      </div>
+    <div className="">
+      <Tabs tabs={tabData} />
     </div>
   );
+  // return (
+  //   <div className="grid grid-cols-2 gap-4 pt-4">
+  //     <BrandShare data={sdaData} title="SDA" />
+  //     <BrandShare data={mdaData} title="MDA" />
+  //     <div className="col-span-2 bg-white px-4 py-2">
+  //       <BrandShare.Bar data={sdaData} />
+  //       <BrandShare.Bar data={sdaData} />
+  //       <BrandShare.Bar data={sdaData} />
+  //       <BrandShare.Bar data={sdaData} />
+  //     </div>
+  //     <div className="col-span-2">
+  //       <RetailerChart data={customerSellInData} />
+  //     </div>
+  //     <div className="col-span-2">
+  //       <RetailerChart type="line" data={customerSellInData} />
+  //     </div>
+  //     <div className="col-span-2">
+  //       <Product.List />
+  //     </div>
+  //     <div className="col-span-2">
+  //       <div className="grid grid-cols-3 gap-2 mb-4">
+  //         <Lineup title="Lineup sample placement" data={lineupData} />
+  //         <Lineup title="Sample placement" data={lineupData} />
+  //         <Lineup title="Non-lineup products" data={lineupData} />
+  //       </div>
+  //       <Lineup.Table data={lineupTableData} />
+  //     </div>
+  //   </div>
+  // );
 }
