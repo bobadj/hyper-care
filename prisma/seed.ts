@@ -189,7 +189,7 @@ async function populateSalesReports() {
   for (let i = 0; i < 12; i++) {
     const reportDate = subMonths(new Date(2024, 11, 1), 11 - i); // Jan to Dec 2024
     for (const pos of posList) {
-      const report = await prisma.report.create({
+      await prisma.report.create({
         data: {
           userId: user.id,
           posId: pos.id,
@@ -217,12 +217,51 @@ async function populateSalesReports() {
   }
 }
 
+async function populateStockStatusReport() {
+  const products = await prisma.product.findMany();
+  const posList = await prisma.pOS.findMany();
+  const user = await prisma.user.findFirst();
+
+  if (!user || posList.length === 0 || products.length === 0) {
+    console.error('Missing user, POS, or products');
+    return;
+  }
+
+  for (let i = 0; i < 12; i++) {
+    const reportDate = subMonths(new Date(2024, 11, 1), 11 - i); // Jan to Dec 2024
+    for (const pos of posList) {
+      await prisma.report.create({
+        data: {
+          userId: user.id,
+          posId: pos.id,
+          date: reportDate,
+          tasks: {
+            create: {
+              type: TaskType.STOCK_STATUS,
+              submitted: true,
+              data: products.map((product) => {
+                const quantity = faker.number.int({ min: 5, max: 50 });
+                return {
+                  productSku: product.sku,
+                  productName: product.name,
+                  quantity,
+                };
+              }),
+            },
+          },
+        },
+      });
+    }
+  }
+}
+
 async function main() {
   await populateUsers();
   await populateBrandsAndProducts();
   await populateRetailers();
   await populatePosForRetailer();
   await populateSalesReports();
+  await populateStockStatusReport();
 }
 
 main()

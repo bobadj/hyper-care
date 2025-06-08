@@ -1,8 +1,8 @@
 import { TaskType } from '@prisma/client';
 import useReport from '@/hooks/useReport';
 
-import RetailerChart from '../RetailerChart';
 import Spinner from '../Spinner';
+import RetailerChart from '../RetailerChart';
 
 export default function SalesReport() {
   const { data, isLoading } = useReport(TaskType.SALE_REPORT);

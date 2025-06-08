@@ -5,7 +5,7 @@ import BrandShare from '../components/BrandShare';
 import RetailerChart from '../components/RetailerChart';
 import Lineup from '../components/Lineup';
 import Tabs from '@/components/Tabs';
-import { SalesReport } from '@/components/Reports';
+import { SalesReport, StockStatusReport } from '@/components/Reports';
 
 const sdaData = [
   { name: 'Philips', value: 11.9 },
@@ -96,7 +96,7 @@ export default function Home() {
     },
     {
       label: 'Stock Status',
-      content: <div>Sales data will appear here.</div>,
+      content: <StockStatusReport />,
     },
     {
       label: 'Lineup Sample Placement',
@@ -113,7 +113,7 @@ export default function Home() {
   ];
 
   return <Tabs tabs={tabData} />;
-  
+
   // return (
   //   <div className="grid grid-cols-2 gap-4 pt-4">
   //     <BrandShare data={sdaData} title="SDA" />

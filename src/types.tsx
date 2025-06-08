@@ -1,3 +1,5 @@
+import { POS, Task } from '@prisma/client';
+
 export type ColorType = `#${string}`;
 
 export type LineupType = {
@@ -7,11 +9,20 @@ export type LineupType = {
   percentage: number;
 };
 
+export type ReportWithTasksAndPos = Report & { tasks: Task[]; pos: POS };
+
 export type SalesReportType = Array<SalesReportEntryType>;
+export type StockStatusReportType = Array<StockStatusReportEntryType>;
 
 export type SalesReportEntryType = {
   productSku: string;
   price: number;
   quantity: number;
   revenue: number;
+};
+
+export type StockStatusReportEntryType = {
+  productSku: string;
+  price: number;
+  quantity: number;
 };

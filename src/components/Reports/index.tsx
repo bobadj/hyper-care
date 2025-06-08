@@ -1,3 +1,4 @@
 import SalesReport from './SalesReport';
+import StockStatusReport from './StockStatusReport';
 
-export { SalesReport };
+export { SalesReport, StockStatusReport };
