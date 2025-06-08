@@ -5,7 +5,11 @@ import BrandShare from '../components/BrandShare';
 import RetailerChart from '../components/RetailerChart';
 import Lineup from '../components/Lineup';
 import Tabs from '@/components/Tabs';
-import { SalesReport, StockStatusReport } from '@/components/Reports';
+import {
+  SalesReport,
+  StockStatusReport,
+  LineupReport,
+} from '@/components/Reports';
 
 const sdaData = [
   { name: 'Philips', value: 11.9 },
@@ -100,7 +104,7 @@ export default function Home() {
     },
     {
       label: 'Lineup Sample Placement',
-      content: <div>Here are your reports.</div>,
+      content: <LineupReport />,
     },
     {
       label: 'Trade Marketing Activity',
@@ -133,14 +137,14 @@ export default function Home() {
   //     <div className="col-span-2">
   //       <Product.List />
   //     </div>
-  //     <div className="col-span-2">
-  //       <div className="grid grid-cols-3 gap-2 mb-4">
-  //         <Lineup title="Lineup sample placement" data={lineupData} />
-  //         <Lineup title="Sample placement" data={lineupData} />
-  //         <Lineup title="Non-lineup products" data={lineupData} />
-  //       </div>
-  //       <Lineup.Table data={lineupTableData} />
-  //     </div>
+  // <div className="col-span-2">
+  //   <div className="grid grid-cols-3 gap-2 mb-4">
+  //     <Lineup title="Lineup sample placement" data={lineupData} />
+  //     <Lineup title="Sample placement" data={lineupData} />
+  //     <Lineup title="Non-lineup products" data={lineupData} />
+  //   </div>
+  //   <Lineup.Table data={lineupTableData} />
+  // </div>
   //   </div>
   // );
 }

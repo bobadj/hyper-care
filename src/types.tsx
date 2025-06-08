@@ -13,6 +13,8 @@ export type ReportWithTasksAndPos = Report & { tasks: Task[]; pos: POS };
 
 export type SalesReportType = Array<SalesReportEntryType>;
 export type StockStatusReportType = Array<StockStatusReportEntryType>;
+export type LineupSamplePlacementReportType =
+  Array<LineupSamplePlacementEntryType>;
 
 export type SalesReportEntryType = {
   productSku: string;
@@ -25,4 +27,9 @@ export type StockStatusReportEntryType = {
   productSku: string;
   price: number;
   quantity: number;
+};
+
+export type LineupSamplePlacementEntryType = {
+  reported: string[];
+  lineup: string[];
 };

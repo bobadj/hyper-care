@@ -255,6 +255,56 @@ async function populateStockStatusReport() {
   }
 }
 
+async function populateLineupSamplePlacementReport() {
+  const allProducts = await prisma.product.findMany();
+  const posList = await prisma.pOS.findMany();
+  const user = await prisma.user.findFirst();
+
+  for (const pos of posList) {
+    // 1. Randomly select 10 products as the lineup
+    const lineup = faker.helpers.arrayElements(allProducts, 10);
+    const lineupProductSkus = lineup.map((p) => p.sku);
+
+    // 2. Reported products: mix of lineup + randoms
+    const randomProducts = faker.helpers.arrayElements(allProducts, 5);
+    const reportedProducts = faker.helpers
+      .shuffle([...lineup, ...randomProducts])
+      .slice(0, faker.number.int({ min: 10, max: 20 }));
+    const reportedProductSkus = reportedProducts.map((p) => p.sku);
+
+    // 3. Calculate metrics (for optional logging)
+    // const intersectionCount = reportedProductSkus.filter((id) =>
+    //   lineupProductSkus.includes(id),
+    // ).length;
+    // const samplePlacement = reportedProductSkus.length / lineup.length;
+    // const lineupSamplePlacement = intersectionCount / lineup.length;
+
+    // console.log(`POS: ${pos.name}`);
+    // console.log(`Sample Placement: ${(samplePlacement * 100).toFixed(2)}%`);
+    // console.log(
+    //   `Lineup Sample Placement: ${(lineupSamplePlacement * 100).toFixed(2)}%`,
+    // );
+
+    // 4. Create report + task
+    await prisma.report.create({
+      data: {
+        posId: pos.id,
+        date: faker.date.recent({ days: 30 }),
+        userId: user!.id,
+        tasks: {
+          create: {
+            type: TaskType.LINEUP_SAMPLE_PLACEMENT,
+            data: {
+              reported: reportedProductSkus,
+              lineup: lineupProductSkus,
+            },
+          },
+        },
+      },
+    });
+  }
+}
+
 async function main() {
   await populateUsers();
   await populateBrandsAndProducts();
@@ -262,6 +312,7 @@ async function main() {
   await populatePosForRetailer();
   await populateSalesReports();
   await populateStockStatusReport();
+  await populateLineupSamplePlacementReport();
 }
 
 main()

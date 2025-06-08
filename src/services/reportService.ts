@@ -13,6 +13,8 @@ class ReportService {
   public async getReport(type: TaskType) {
     const data = await this.getReportData(type);
     switch (type) {
+      case TaskType.LINEUP_SAMPLE_PLACEMENT:
+        return await this.getLineupSamplePlacementReport(data);
       case TaskType.STOCK_STATUS:
         return await this.getStockStatusReport(data);
       case TaskType.SALE_REPORT:
@@ -115,6 +117,127 @@ class ReportService {
         value: Math.round(value / 1000),
       })),
     }));
+  }
+
+  private async getLineupSamplePlacementReport(
+    reports: Array<Report & { tasks: Task[]; pos: POS }>,
+  ) {
+    const placementEntries = reports.flatMap((report) =>
+      report.tasks.map((task) => {
+        const data = task.data as {
+          lineup: string[];
+          reported: string[];
+        };
+
+        const lineupSet = new Set(data.lineup || []);
+        const reportedSet = new Set(data.reported || []);
+
+        const lineupSize = lineupSet.size || 1;
+        const reportedSize = reportedSet.size;
+        const overlapCount = [...reportedSet].filter((id) =>
+          lineupSet.has(id),
+        ).length;
+        const nonLineupCount = reportedSize - overlapCount;
+
+        return {
+          retailer: report.pos.name,
+          samplePlacementTotal: reportedSize,
+          lineupSamplePlacementTotal: overlapCount,
+          nonLineupPlacementTotal: nonLineupCount,
+          lineupSize,
+        };
+      }),
+    );
+    const placementRankEntries = reports.flatMap((report) =>
+      report.tasks.map((task) => {
+        const data = task.data as {
+          lineup: string[];
+          reported: string[];
+        };
+
+        const lineup = new Set(data.lineup || []);
+        const reported = new Set(data.reported || []);
+
+        const lineupSize = lineup.size || 1;
+        const overlapCount = [...reported].filter((id) =>
+          lineup.has(id),
+        ).length;
+
+        return {
+          retailer: report.pos.name,
+          pointOfSale: `${report.pos.name}, ${report.pos.location}`,
+          percentage: +((overlapCount / lineupSize) * 100).toFixed(2),
+        };
+      }),
+    );
+
+    // Aggregate by retailer
+    const retailerMap = new Map<
+      string,
+      {
+        samplePlacementTotal: number;
+        lineupSamplePlacementTotal: number;
+      }
+    >();
+
+    let globalReported = 0;
+    let globalLineup = 0;
+    let globalOverlap = 0;
+    let globalNonLineup = 0;
+
+    for (const entry of placementEntries) {
+      const {
+        retailer,
+        samplePlacementTotal,
+        lineupSamplePlacementTotal,
+        nonLineupPlacementTotal,
+        lineupSize,
+      } = entry;
+
+      if (!retailerMap.has(retailer)) {
+        retailerMap.set(retailer, {
+          samplePlacementTotal: 0,
+          lineupSamplePlacementTotal: 0,
+        });
+      }
+
+      const acc = retailerMap.get(retailer)!;
+      acc.samplePlacementTotal += samplePlacementTotal;
+      acc.lineupSamplePlacementTotal += lineupSamplePlacementTotal;
+
+      globalReported += samplePlacementTotal;
+      globalOverlap += lineupSamplePlacementTotal;
+      globalNonLineup += nonLineupPlacementTotal;
+      globalLineup += lineupSize;
+    }
+
+    // Final output
+    const result = Array.from(retailerMap.entries()).map(
+      ([retailer, values]) => ({
+        retailer,
+        samplePlacementTotal: values.samplePlacementTotal,
+        lineupSamplePlacementTotal: values.lineupSamplePlacementTotal,
+      }),
+    );
+
+    const samplePlacement = +((globalReported / globalLineup) * 100).toFixed(2);
+    const lineupSamplePlacement = +(
+      (globalOverlap / globalLineup) *
+      100
+    ).toFixed(2);
+
+    return {
+      result,
+      samplePlacement,
+      lineupSamplePlacement,
+      nonLineupPlacementTotal: globalNonLineup,
+      table: placementRankEntries
+        .sort((a, b) => b.percentage - a.percentage)
+        .map((entry, index) => ({
+          rank: index + 1,
+          ...entry,
+        })),
+    };
   }
 }
 

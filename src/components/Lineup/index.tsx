@@ -9,14 +9,18 @@ import LineupTable from './Table';
 
 type LineupProps = {
   title: string;
-  data: { name: string; value: number }[];
+  data: { retailer: string; value: number }[];
   colors?: ColorType[];
+  valueKey?: string;
+  value?: number;
 };
 
 const Lineup = ({
   title,
   data,
   colors = ['#006861', '#008c81'],
+  valueKey = 'lineupSamplePlacementTotal',
+  value = 30,
 }: LineupProps) => {
   return (
     <div className="flex flex-col gap-2">
@@ -35,8 +39,8 @@ const Lineup = ({
             <PieChart>
               <Pie
                 data={data}
-                dataKey="value"
-                nameKey="name"
+                dataKey={valueKey}
+                nameKey="retailer"
                 outerRadius={100}
                 innerRadius={50}
               >
@@ -59,7 +63,7 @@ const Lineup = ({
           </ResponsiveContainer>
         </div>
       </div>
-      <Info title={title} content="30 %" />
+      <Info title={title} content={`${value} %`} />
     </div>
   );
 };
