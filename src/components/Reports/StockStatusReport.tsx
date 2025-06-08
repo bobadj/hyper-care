@@ -2,8 +2,8 @@ import { TaskType } from '@prisma/client';
 
 import useReport from '@/hooks/useReport';
 
+import Chart from '../Chart';
 import Spinner from '../Spinner';
-import RetailerChart from '../RetailerChart';
 
 export default function StockStatusReport() {
   const { data, isLoading } = useReport(TaskType.STOCK_STATUS);
@@ -12,5 +12,5 @@ export default function StockStatusReport() {
     return <Spinner />;
   }
 
-  return <RetailerChart type="line" data={data.data || []} />;
+  return <Chart type="line" data={data.data || []} />;
 }

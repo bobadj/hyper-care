@@ -14,19 +14,19 @@ import {
 import { ColorType } from '@/types';
 import { generateMonochromeRamp, toSnakeCase } from '@/utils';
 
-type BrandShareBarChartProps = {
+type BarInlineChartProps = {
   title?: string;
   data: { name: string; value: number }[];
   topN?: number;
   topColors?: ColorType[];
 };
 
-export default function BrandShareBarChart({
+export default function BarInlineChart({
   title = 'Bar Chart',
   data,
   topN = 3,
   topColors = ['#008d82', '#006a62', '#074a45'],
-}: BrandShareBarChartProps) {
+}: BarInlineChartProps) {
   const formattedData = data.reduce(
     (acc, item) => ({ ...acc, [toSnakeCase(item.name)]: item.value }),
     {},

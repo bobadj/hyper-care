@@ -1,10 +1,10 @@
 import { LineupType } from '@/types';
 
-type LineupTableProps = {
+type TableProps = {
   data: LineupType[];
 };
 
-export default function LineupTable({ data }: LineupTableProps) {
+export default function Table({ data }: TableProps) {
   return (
     <div className="w-full bg-white px-5 py-2 shadow-xs py-10">
       <table className="w-full">

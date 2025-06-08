@@ -10,12 +10,11 @@ import {
 } from 'recharts';
 
 import MaterialIcon from '../MaterialIcon';
-import BrandShareBarChart from './BrandShareBarChart';
 
 import { ColorType } from '@/types';
 import { generateMonochromeRamp } from '@/utils';
 
-type BrandShareProps = {
+type CircleChartProps = {
   title?: string;
   data: { name: string; value: number }[];
   topN?: number;
@@ -46,12 +45,12 @@ const renderCustomizedLabel = ({
   );
 };
 
-const BrandShare = ({
+export default function CircleChart({
   title,
   data = [],
   topN = 4,
   topColors = ['#008d82', '#008d82', '#006a62', '#074a45'],
-}: BrandShareProps) => {
+}: CircleChartProps) {
   const monochromeRamps = generateMonochromeRamp(data.length - topN);
   const colors = data.map((_, i) =>
     i < topN ? topColors[i] : monochromeRamps[i - topN],
@@ -90,8 +89,4 @@ const BrandShare = ({
       </ResponsiveContainer>
     </div>
   );
-};
-
-BrandShare.Bar = BrandShareBarChart;
-
-export default BrandShare;
+}

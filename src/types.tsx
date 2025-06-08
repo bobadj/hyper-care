@@ -9,6 +9,11 @@ export type LineupType = {
   percentage: number;
 };
 
+export type RetailerChartData = {
+  name: string;
+  retailer: Array<{ name: string; value: number }>;
+};
+
 export type ReportWithTasksAndPos = Report & { tasks: Task[]; pos: POS };
 
 export type SalesReportType = Array<SalesReportEntryType>;

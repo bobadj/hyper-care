@@ -1,13 +1,20 @@
 'use client';
 
 import classNames from 'classnames';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
-import MaterialIcon from '../MaterialIcon';
-import Info from '../Info';
-import { ColorType } from '@/types';
-import LineupTable from './Table';
+import {
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts';
 
-type LineupProps = {
+import Info from '../Info';
+import MaterialIcon from '../MaterialIcon';
+
+import { ColorType } from '@/types';
+
+type PieChartProps = {
   title: string;
   data: { retailer: string; value: number }[];
   colors?: ColorType[];
@@ -15,13 +22,13 @@ type LineupProps = {
   value?: number;
 };
 
-const Lineup = ({
+export default function PieChart({
   title,
   data,
   colors = ['#006861', '#008c81'],
   valueKey = 'lineupSamplePlacementTotal',
   value = 30,
-}: LineupProps) => {
+}: PieChartProps) {
   return (
     <div className="flex flex-col gap-2">
       <div className="w-full bg-white px-5 py-2 shadow-xs">
@@ -36,7 +43,7 @@ const Lineup = ({
 
         <div className="flex justify-center">
           <ResponsiveContainer width={350} height={320}>
-            <PieChart>
+            <RechartsPieChart>
               <Pie
                 data={data}
                 dataKey={valueKey}
@@ -59,15 +66,11 @@ const Lineup = ({
                   <span className="text-black text-sm">{name}</span>
                 )}
               />
-            </PieChart>
+            </RechartsPieChart>
           </ResponsiveContainer>
         </div>
       </div>
       <Info title={title} content={`${value} %`} />
     </div>
   );
-};
-
-Lineup.Table = LineupTable;
-
-export default Lineup;
+}

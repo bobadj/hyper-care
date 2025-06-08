@@ -1,24 +1,22 @@
-import React from 'react';
 import {
+  ResponsiveContainer,
   BarChart,
-  Bar,
+  CartesianGrid,
   XAxis,
   YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
   Legend,
+  Tooltip,
+  Bar,
   LineChart,
   Line,
 } from 'recharts';
 
-import { ColorType } from '@/types';
 import { toSnakeCase } from '@/utils';
+import type { ColorType, RetailerChartData } from '@/types';
 
-export type RetailerChartData = {
-  name: string;
-  retailer: Array<{ name: string; value: number }>;
-};
+import PieChart from './PieChart';
+import CircleChart from './CircleChart';
+import BarInlineChart from './BarInlineChart';
 
 type RetailerChartProps = {
   data: RetailerChartData[];
@@ -27,12 +25,12 @@ type RetailerChartProps = {
   type?: 'bar' | 'line';
 };
 
-export default function RetailerChart({
+const Chart = ({
   title = 'Customers - Sell In',
   data,
   colors = ['#008d82', '#006a62', '#074a45'],
   type = 'bar',
-}: RetailerChartProps) {
+}: RetailerChartProps) => {
   const chartData = data.map((item) => {
     const obj = { name: item.name };
     const customers = (item.retailer || []).reduce(
@@ -97,4 +95,10 @@ export default function RetailerChart({
       </ResponsiveContainer>
     </div>
   );
-}
+};
+
+Chart.Pie = PieChart;
+Chart.Circle = CircleChart;
+Chart.BarInline = BarInlineChart;
+
+export default Chart;
