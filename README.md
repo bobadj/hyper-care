@@ -18,6 +18,7 @@ Create a `.env` file in the project root and set the database connection:
 ```bash
 DATABASE_URL="file:./dev.db"
 ```
+*`.env` file is included in a repository for convenient start*
 
 ### 3. Run Prisma Migration
 ```bash
